@@ -2,9 +2,12 @@
 title: "How to publish React components as an NPM package"
 separator: <--s-->
 verticalSeparator: <--v-->
+revealOptions: 
+  transition: 'slide'
+  showNotes: false
 ---
 
-# Creating NPM packages
+# Creating NPM Packages
 
 How to turn your React Components into a library you can download and use via node package manager
 
@@ -72,7 +75,7 @@ Note: (TODO: image of what the directory looks like at this point plus the upcom
 
 <--v-->
 
-## Exporting your components
+## Export your components
 
 In `lib`, create another `index.js` file. Write an import and export statement for each of your components like so:
 
@@ -83,13 +86,13 @@ export { Button };
 
 <--v-->
 
-## Testing your components
+## Test your components
 
 Out of the box, you can run any jest tests you've placed in the src directory with the command `npm run test`. If you want to use some other library, you'll have to set that up in `package.json` yourself.
 
 <--v-->
 
-## Making sure they work
+## Make sure they work
 
 If you wish to see your components in action, you can import them into `src/index.js` (the one not in the lib folder) and run `npm run start` to see what everything looks like. 
 
@@ -97,7 +100,7 @@ Note: If you intend to set up Storybook for your project, you can also import ch
 
 <--s-->
 
-## Setting up the build process
+## Set up build process
 
 To output a `/dist` folder for publication, we'll be replacing `create-react-app`'s "build" script with a [Babel](https://babeljs.io/) script of our own.
 
