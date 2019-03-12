@@ -4,7 +4,7 @@ A presentation made with [reveal-md](https://github.com/webpro/reveal-md) for an
 
 ## Running this presentation
 
-Install `reveal-md` globally with `npm i -g reveal-md`, then navigate to this directory in a terminal and run `reveal-md slides.md --theme theme/night-owl.css -w`. For more flags and options, look at [reveal-md's]([reveal-md](https://github.com/webpro/reveal-md)) and [reveal.js's](https://github.com/hakimel/reveal.js/) documentation (see below).
+Install `reveal-md` globally with `npm i -g reveal-md`, then navigate to this directory in a terminal and run `reveal-md slides.md`. For more flags and options, look at [reveal-md's]([reveal-md](https://github.com/webpro/reveal-md)) and [reveal.js's](https://github.com/hakimel/reveal.js/) documentation (see below).
 
 ## Credits
 

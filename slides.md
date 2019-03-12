@@ -1,20 +1,25 @@
 ---
 title: "How to publish React components as an NPM package"
+theme: "./theme/night-owl.css"
 separator: <--s-->
 verticalSeparator: <--v-->
 revealOptions: 
   transition: 'slide'
-  showNotes: false
+  showNotes: true
 ---
 
-# Creating NPM Packages
+## Creating NPM Packages
+
+<img src='assets/npm-logo.svg' alt='NPM Logo' style='width: 150px'></img>
+<img src='assets/react-logo.svg' alt='React Logo' style='width: 150px'></img>
 
 How to turn your React Components into a library you can download and use via node package manager
 
-Note: For today's tech talk, I decided to speak briefly about how I turned a number of React components we intended to use among multiple websites into npm packages that we can import and use in any React project. (TODO: picture of NPM and/or React logos?)
+Note: For today's tech talk, I decided to speak briefly about how I turned a number of React components we intended to use among multiple websites into npm packages that we can import and use in any React project.
 
 <--s-->
 
+<!-- .slide: data-background="./assets/saturn-background.png" -->
 ## Our Libraries
 
 * [apm-titan](https://www.npmjs.com/package/apm-titan)
@@ -22,13 +27,15 @@ Note: For today's tech talk, I decided to speak briefly about how I turned a num
 * apm-saturn (*to be released*)
 * slideshow (*to be released?*)
 
-Note: At the moment we have two libraries up and running in beta: `apm-titan` and `apm-mimas`. We intend to call our root site generator **Saturn**, so we decided to name any React component packages after the moons of Saturn. Titan is Saturn's largest moon, so naturally it's the name of our biggest package that contains most of the "building blocks" we will use to make our sites. **Mimas** is a much smaller library used to generate images from our Images API, so it's named after the much smaller moon **Mimas**. (TODO: have a picture of Saturn and its moons in the background)
+Note: At the moment we have two libraries up and running in beta: `apm-titan` and `apm-mimas`. We intend to call our root site generator **Saturn**, so we decided to name any React component packages after the moons of Saturn. Titan is Saturn's largest moon, so naturally it's the name of our biggest package that contains most of the "building blocks" we will use to make our sites. **Mimas** is a much smaller library used to generate images from our Images API, so it's named after the much smaller moon **Mimas**.
 
 <--s-->
 
-## My process
+## In a nutshell
 
-Create a new package, set up the build process, and start plopping your reusable components in there.
+1. Create a new package
+2. Set up the build process
+3. Start plopping your components in there
 
 Note: There are likely many other processes that would work, and there may be some that work even better, but this is the one that worked for me and that made the most sense to me by the time I did it twice.
 
@@ -36,7 +43,7 @@ Note: There are likely many other processes that would work, and there may be so
 
 ## Create a new project
 
-Install `create-react-app` globally if you haven't already and run the command
+Install `create-react-app` globally if you haven't already and run the command:
 
 `create-react-app [your-package-name]`
 
@@ -44,34 +51,38 @@ Install `create-react-app` globally if you haven't already and run the command
 
 ## Cleanup
 
-Delete all the files inside `src/` and create a new `index.js` file with some starter code:
+Delete all the files inside `src/` and create a new `index.js` file with the following starter code:
 
 ```
-import React from 'react';
-import { render } from 'react-dom';
+import React from 'react'
+import { render } from 'react-dom'
 
 const App = () => (
   <>
     <h1>This is my app</h1>
   </>
-);
+)
 
-render(<App />, document.getElementById('root'));
+render(<App />, document.getElementById('root'))
 ```
 
 <--v-->
 
 ## Create a Library
 
-Create a new folder in `src` called `lib`. This will serve as the root folder of the module published to npm.
+Create a new folder in `src` called `lib`.
+
+This will serve as the root folder of the module published to npm.
 
 <--v-->
 
 ## Drop in your components
 
-Now you can drop your components into `src/lib`. We structure our projects so that each component has a folder, and that folder also contains any tests, documentation and stories for that component, but you can set up these component files however you like.
+Now you can drop your components into `src/lib`.
 
-Note: (TODO: image of what the directory looks like at this point plus the upcoming index.js file)
+<img src='assets/directory(1).png' alt='Your components will live in src/lib' style='width: 225px'></img>
+
+Notes: We structure our projects so that each component has a folder, and that folder also contains any tests, documentation and stories for that component, but you can set up these component files however you like.
 
 <--v-->
 
@@ -80,39 +91,46 @@ Note: (TODO: image of what the directory looks like at this point plus the upcom
 In `lib`, create another `index.js` file. Write an import and export statement for each of your components like so:
 
 ```
-import Button from "./Button";
-export { Button };
+import Button from './Button'
+export { Button }
 ```
 
 <--v-->
 
 ## Test your components
 
-Out of the box, you can run any jest tests you've placed in the src directory with the command `npm run test`. If you want to use some other library, you'll have to set that up in `package.json` yourself.
+Out of the box, you can run any jest tests you've placed in the src directory with the command `npm run test`.
+
+If you want to use some other library, you'll have to set that up in `package.json` yourself.
 
 <--v-->
 
 ## Make sure they work
 
-If you wish to see your components in action, you can import them into `src/index.js` (the one not in the lib folder) and run `npm run start` to see what everything looks like. 
+If you wish to see your components in action, you can import them into `src/index.js` (the one not in the lib folder) and run `npm start` to see what everything looks like. 
 
-Note: If you intend to set up Storybook for your project, you can also import check out your components there. (TODO: image of Button component(s) being rendered on localhost:3000). 
+<img src='assets/code(1).png' alt='Importing my Button component to make sure it works' style='width: 350px;margin: 10px'></img>
+<img src='assets/localhost(1).png' alt='My Button component in action on localhost:3000' style='width: 350px;margin: 10px'></img>
+
+Note: If you intend to set up Storybook for your project, you can also import check out your components there.
 
 <--s-->
 
+<!-- .slide: data-background="./assets/babel-background.png" -->
 ## Set up build process
 
 To output a `/dist` folder for publication, we'll be replacing `create-react-app`'s "build" script with a [Babel](https://babeljs.io/) script of our own.
 
 <--v-->
 
-Run the command `npm i -D @babel/cli @babel/preset-env @babel/preset-react` to install it and some default settings to your dev dependencies. Then create a file `.babelrc` in the root of the project with the following contents:
+Run the command `npm i -D @babel/cli @babel/preset-env @babel/preset-react babel-preset-minify` to install it and some default settings to your dev dependencies. Then create a file `.babelrc` in the root of the project with the following contents:
 
 ```
 {
   "presets": [
     "@babel/preset-env",
     "@babel/preset-react",
+    "minify",
     [
       "react-app",
         { "absoluteRuntime": false }
@@ -120,8 +138,6 @@ Run the command `npm i -D @babel/cli @babel/preset-env @babel/preset-react` to i
   ]
 }
 ```
-
-Note: (TODO: Babel logo in background?)
 
 <--v-->
 
@@ -172,13 +188,12 @@ Note: You'll only have to do this part if you've never published to NPM before.
 
 <--v-->
 
+<!-- .slide: data-background="./assets/fireworks-background.png" -->
 ## Publish the dang thing
 
-`npm run publish`
+<img src='https://media.giphy.com/media/zBhZiVNNQjfTG/giphy.gif' alt='Yaaaasss gif' style='width: 350px;margin: 10px'></img>
 
-That's it! Try downloading your package with `npm i [your-package-name]` and use it however you please.
-
-Note: (TODO: Fireworks background or something silly like that (a gif or video?))
+Run `npm run publish`. That's it! Try downloading your package with `npm i [your-package-name]` and use it however you please.)
 
 <--v-->
 
@@ -194,9 +209,9 @@ Note: You should generally avoid unpublishing things, especially if someone may 
 
 ## Credits
 
-* This tutorial was largely based on [this one](https://hackernoon.com/creating-a-library-of-react-components-using-create-react-app-without-ejecting-d182df690c6b) by Aakash N S for [HackerNoon](https://hackernoon.com/), but updated and edited to better fit our needs.
+* This tutorial was largely based on [this one](https://hackernoon.com/creating-a-library-of-react-components-using-create-react-app-without-ejecting-d182df690c6b) by Aakash N S for [HackerNoon](https://hackernoon.com/), but updated and edited to better fit our needs
 * I also used a bit of [this tutorial](https://medium.freecodecamp.org/how-to-make-a-beautiful-tiny-npm-package-and-publish-it-2881d4307f78) by Jonathan Wood for [freeCodeCamp](https://medium.freecodecamp.org/) to remind myself how I logged in to NPM
-* This presentation was made with [reveal-md](https://github.com/webpro/reveal-md), a library that uses [reveal.js](https://github.com/hakimel/reveal.js/) to create slides and transitions from a markdown file. I absolutely loved using it, especially compared to PowerPoint.
+* This presentation was made with [reveal-md](https://github.com/webpro/reveal-md), a library that uses [reveal.js](https://github.com/hakimel/reveal.js/) to create slides and transitions from a markdown file
 
 <--v-->
 
