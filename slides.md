@@ -1,11 +1,11 @@
 ---
 title: "How to publish React components as an NPM package"
-theme: "./theme/night-owl.css"
+theme: "assets/night-owl.css"
 separator: <--s-->
 verticalSeparator: <--v-->
 revealOptions: 
   transition: 'slide'
-  showNotes: true
+  showNotes: false
 ---
 
 ## Creating NPM Packages

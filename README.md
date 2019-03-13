@@ -4,7 +4,7 @@ A presentation made with [reveal-md](https://github.com/webpro/reveal-md) for an
 
 ## Running this presentation
 
-Install `reveal-md` globally with `npm i -g reveal-md`, then navigate to this directory in a terminal and run `reveal-md slides.md`. For more flags and options, look at [reveal-md's]([reveal-md](https://github.com/webpro/reveal-md)) and [reveal.js's](https://github.com/hakimel/reveal.js/) documentation (see below).
+See the *package.json* form possible commands. To publish, run `npm run build` then `npm run stylefix` to actually link up the custom theme properly. For more flags and options, look at [reveal-md's]([reveal-md](https://github.com/webpro/reveal-md)) and [reveal.js's](https://github.com/hakimel/reveal.js/) documentation (see below).
 
 ## Credits
 

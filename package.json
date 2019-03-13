@@ -1,0 +1,29 @@
+{
+  "name": "tech-talk-npm-package",
+  "version": "1.0.0",
+  "description": "A presentation made with for an upcoming MPR tech talk. We're rather new to making NPM packages as an organization, and I wanted to share what I've learned.",
+  "main": "index.js",
+  "author": "Kim Thompson <kthompson@mpr.org (http://kimthompson.me)",
+  "license": "MIT",
+  "scripts": {
+    "start": "reveal-md slides.md",
+    "build": "reveal-md slides.md --static docs --static-dirs=assets",
+    "stylefix": "mv docs/index.html docs/index_old.html && sed 's?./_assets/assets/night-owl.css?./assets/night-owl.css?g' docs/index_old.html > docs/index.html",
+    "serve": "serve docs",
+    "prePublish": "npm run stylefix"
+  },
+  "dependencies": {
+    "reveal-md": "^3.0.4"
+  },
+  "devDependencies": {
+    "serve": "^10.1.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kimthompson/tech-talk-npm-package.git"
+  },
+  "bugs": {
+    "url": "https://github.com/kimthompson/tech-talk-npm-package/issues"
+  },
+  "homepage": "http://kimthompson.me/tech-talk-npm-package"
+}
