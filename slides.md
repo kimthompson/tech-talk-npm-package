@@ -151,7 +151,11 @@ Inside the project's `package.json`, replace the `build` script with the followi
 
 The command `npm run build` will now transpile the code inside `src/lib` into the folder `dist`.
 
-Note: This `ignore` flag is unfortunately not working at the moment, so your test files and others will be copied up to the `/dist` directory anyway. I hope they'll fix it soon, so I included it here anyway, since this is really a better solution than just ignoring it or performing some sort of cleanup script immediately after. (TODO: Image of `/dist` directory produced by this?)
+Note: This `ignore` flag is unfortunately not working at the moment, so your test files and others will be copied up to the `/dist` directory anyway. I hope they'll fix it soon, so I included it here anyway, since this is really a better solution than just ignoring it or performing some sort of cleanup script immediately after.
+
+<--v-->
+
+Add the two following attributes to your `package.json`:
 
 <--s-->
 
@@ -170,7 +174,7 @@ Remove the line `"private": true` from `package.json`, move `react-scripts`, `re
 "license": "MIT"
 ```
 
-Note: You should also set the package's license to MIT, like the other packages we have public on GitHub.
+Note: You should also set the package's license to MIT and set `private` to `false`, like the other packages we have public on GitHub.
 
 <--v-->
 
