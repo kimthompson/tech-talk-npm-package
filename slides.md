@@ -5,7 +5,7 @@ separator: <--s-->
 verticalSeparator: <--v-->
 revealOptions: 
   transition: 'slide'
-  showNotes: false
+  showNotes: true
 ---
 
 ## Creating NPM Packages
