@@ -5,7 +5,7 @@ separator: <--s-->
 verticalSeparator: <--v-->
 revealOptions: 
   transition: 'slide'
-  showNotes: false
+  showNotes: true
 ---
 
 ## Creating NPM Packages
@@ -15,7 +15,7 @@ revealOptions:
 
 How to turn your React Components into a library you can download and use via node package manager
 
-Note: For today's tech talk, I decided to speak briefly about how I turned a number of React components we intended to use among multiple websites into npm packages that we can import and use in any React project.
+Note: For today's tech talk, I decided to speak briefly about how I turned a number of React components we intend to use among multiple websites into NPM packages that we can import and use in any React project.
 
 <--s-->
 
@@ -27,177 +27,269 @@ Note: For today's tech talk, I decided to speak briefly about how I turned a num
 * apm-saturn (*to be released*)
 * slideshow (*to be released?*)
 
-Note: At the moment we have two libraries up and running in beta: `apm-titan` and `apm-mimas`. We intend to call our root site generator **Saturn**, so we decided to name any React component packages after the moons of Saturn. Titan is Saturn's largest moon, so naturally it's the name of our biggest package that contains most of the "building blocks" we will use to make our sites. **Mimas** is a much smaller library used to generate images from our Images API, so it's named after the much smaller moon **Mimas**.
+Note: At the moment we have two libraries up and running in beta: `apm-titan` and `apm-mimas`. We intend to call our root site generator **Saturn**, so we decided to name any React component packages after the moons of Saturn. **Titan** is Saturn's largest moon, so naturally it's the name of our biggest package that contains most of the "building blocks" we've been using to build our sites. **Mimas** is a much smaller library used to generate images from our Images API, so it's named after a much smaller moon.
 
 <--s-->
 
 ## In a nutshell
 
-1. Create a new package
-2. Set up the build process
-3. Start plopping your components in there
+1. Create a simple local NPM module
+2. Set up the build process with Babel and Webpack
+3. Ensure that other React projects can use it with `npm link`
+4. Publish to NPM
 
-Note: There are likely many other processes that would work, and there may be some that work even better, but this is the one that worked for me and that made the most sense to me by the time I did it twice.
-
-<--v-->
-
-## Create a new project
-
-Install `create-react-app` globally if you haven't already and run the command:
-
-`create-react-app [your-package-name]`
-
-<--v-->
-
-## Cleanup
-
-Delete all the files inside `src/` and create a new `index.js` file with the following starter code:
-
-```
-import React from 'react'
-import { render } from 'react-dom'
-
-const App = () => (
-  <>
-    <h1>This is my app</h1>
-  </>
-)
-
-render(<App />, document.getElementById('root'))
-```
-
-<--v-->
-
-## Create a Library
-
-Create a new folder in `src` called `lib`.
-
-This will serve as the root folder of the module published to npm.
-
-<--v-->
-
-## Drop in your components
-
-Now you can drop your components into `src/lib`.
-
-<img src='assets/directory(1).png' alt='Your components will live in src/lib' style='width: 225px'></img>
-
-Notes: We structure our projects so that each component has a folder, and that folder also contains any tests, documentation and stories for that component, but you can set up these component files however you like.
-
-<--v-->
-
-## Export your components
-
-In `lib`, create another `index.js` file. Write an import and export statement for each of your components like so:
-
-```
-import Button from './Button'
-export { Button }
-```
-
-<--v-->
-
-## Test your components
-
-Out of the box, you can run any jest tests you've placed in the src directory with the command `npm run test`.
-
-If you want to use some other library, you'll have to set that up in `package.json` yourself.
-
-<--v-->
-
-## Make sure they work
-
-If you wish to see your components in action, you can import them into `src/index.js` (the one not in the lib folder) and run `npm start` to see what everything looks like. 
-
-<img src='assets/code(1).png' alt='Importing my Button component to make sure it works' style='width: 350px;margin: 10px'></img>
-<img src='assets/localhost(1).png' alt='My Button component in action on localhost:3000' style='width: 350px;margin: 10px'></img>
-
-Note: If you intend to set up Storybook for your project, you can also import check out your components there.
+Note: There are likely many other processes that would work, and there may be some that work even better, but this is the one that worked for me. I'll walk you through the setup, and you're free to follow along if you wish, but it shouldn't be necessary.
 
 <--s-->
 
-<!-- .slide: data-background="./assets/babel-background.png" -->
-## Set up build process
+## Creating a simple local npm module
 
-To output a `/dist` folder for publication, we'll be replacing `create-react-app`'s "build" script with a [Babel](https://babeljs.io/) script of our own.
+Note: Install `npm` and `node` if you haven't already.
 
 <--v-->
 
-Run the command `npm i -D @babel/cli @babel/preset-env @babel/preset-react babel-preset-minify` to install it and some default settings to your dev dependencies. Then create a file `.babelrc` in the root of the project with the following contents:
+Create a new folder called `yet-another-npm-demo`, then create a `package.json` inside it by running `npm init` and following the prompts. Create a file in this folder called `index.js` and copy the following code to it:
 
 ```
-{
-  "presets": [
-    "@babel/preset-env",
-    "@babel/preset-react",
-    "minify",
-    [
-      "react-app",
-        { "absoluteRuntime": false }
-    ]
-  ]
+exports.printMsg = function() {
+  console.log("This is a message from yet-another-npm-demo");
 }
 ```
 
-<--v-->
-
-## Replacing the build script
-
-Inside the project's `package.json`, replace the `build` script with the following:
-
-```
-"build" : "rm -rf dist && NODE_ENV=production babel src/lib --out-dir dist --copy-files --ignore __tests__,spec.js,test.js,__snapshots__,'src/**/*.story.js','src/**/*.test.js'"
-```
-
-The command `npm run build` will now transpile the code inside `src/lib` into the folder `dist`.
-
-Note: This `ignore` flag is unfortunately not working at the moment, so your test files and others will be copied up to the `/dist` directory anyway. I hope they'll fix it soon, so I included it here anyway, since this is really a better solution than just ignoring it or performing some sort of cleanup script immediately after.
+Note: First, we'll be creating a very simple project to demonstrate how to export. Create a folder called **yet-another-npm-demo**, navigate into it and run `npm-init`. The defaults are fine for most options. You're likely going to want to use `MIT` licensing like our other apps, but whatever you set these to is up to you.<br><br>Next, let's give this project a single file: `index.js`, and have it export a single function, `printMsg()`. This can now be used by anyone who downloads `yet-another-npm-demo`.
 
 <--v-->
 
-Add the two following attributes to your `package.json`:
+Run the command `npm link`. This will create an npm package that you can use locally.
+
+<img src='assets/vscode(1).png' alt='The setup right now' style='width: 625px'></img>
+
+Note: Now, instead of publishing right away, we're going to test that this works as a package using the command `npm link`. If you run it and it builds successfully, you can then use it in other projects on your machine.
+
+<--v-->
+
+In another project that accepts npm packages, run the command `npm link yet-another-npm-demo`. You should now be able to use the `printMsg()` function in another app.
+
+<img src='assets/vscode(2).png' alt='Importing your package' style='width: 625px'></img>
+
+Note: This is basically equivalent to installing `yet-another-npm-demo` with `npm i yet-another-npm-demo` if this were already published.
 
 <--s-->
 
-## Prepare for publishing
+## Set up the build process with Babel and Webpack
 
-Remove the line `"private": true` from `package.json`, move `react-scripts`, `react` and `react-dom` from dependencies to devDependencies, and add the following lines:
-
-```
-"main": "dist/index.js",
-"module": "dist/index.js",
-"files": [ "dist", "README.md" ],
-"repository": {
-  "type": "git",
-  "url": "URL_OF_YOUR_REPOSITORY"
-},
-"license": "MIT"
-```
-
-Note: You should also set the package's license to MIT and set `private` to `false`, like the other packages we have public on GitHub.
+Note: So far, we haven't done anything that's too useful on its own. In reality, we're going to need use Webpack and Babel to transpile our ES6+ and React code into something that we can then distribute on NPM.
 
 <--v-->
 
-## Readme
+Run the following command to download the dependencies you will need:
 
-Replace the text in the default `README.md` file with some useful information about what your package does and how to use it.
+```
+npm i -D @babel/core @babel/plugin-proposal-class-properties @babel/preset-env @babel/preset-react @babel/runtime babel-loader webpack webpack-cli classnames react
+```
+
+Note: `npm i` is a shorthand for `npm install` and `-D` is a shorthand for `--save-dev`
+
+<--v-->
+
+Add the following scripts to the `scripts` section of your `package.json`:
+
+```
+"scripts": {
+  "build": "webpack --mode production",
+  "start": "webpack --mode development"
+}
+```
+
+And change the target of `"main"` to be `"dist/index.js"`
+
+<--v-->
+
+Then, create a `/src` folder. This is where we'll be creating or placing our React components.
+
+<img src='assets/vscode(3).png' alt='The file structure' style='width: 150px'></img>
+
+Note: I added a simple component for this demonstration, so our file structure now looks like this. I'll briefly show you what's in each file.
 
 <--s-->
 
-## Publication
+#### src/components/Heading/Heading.js
+
+```
+import React from 'react';
+import PropTypes from 'prop-types';
+import classNames from 'classnames';
+
+const Heading = (props) => {
+  const classes = classNames({
+    hdg: true,
+    [`hdg-${props.level}`]: props.level,
+    [props.elementClass]: props.elementClass
+  });
+  const Hdg = `h${props.level}`;
+
+  return <Hdg className={classes}>{props.children}</Hdg>;
+};
+
+Heading.propTypes = {
+  children: PropTypes.node,
+  elementClass: PropTypes.string,
+  level: PropTypes.number.isRequired
+};
+
+export default Heading;
+```
+
+Note: This is just the Heading component code from **Titan** with the tests and storybook file stripped out. 
+
+<--v-->
+
+#### src/index.js
+
+```
+import Heading from './components/Heading/Heading';
+export { Heading };
+```
+
+Note: This one imports the Heading component to a central location and exports it from there.
+
+<--v-->
+
+#### webpack.config.js
+
+```
+const path = require('path');
+
+module.exports = {
+  mode: 'production',
+  entry: './src/index.js',
+  output: {
+    path: path.resolve('dist'),
+    filename: 'index.js',
+    libraryTarget: 'commonjs2'
+  },
+  module: {
+    rules: [
+      {
+        test: /\.js?$/,
+        exclude: /(node_modules)/,
+        use: 'babel-loader'
+      }
+    ]
+  },
+  resolve: {
+    extensions: ['.js']
+  }
+};
+```
+
+Note: This ensures that we pack everything up into our new `/dist` folder and process it via the Babel Loader.
+
+<--v-->
+
+#### .babelrc
+
+```
+{
+  "presets": ["@babel/preset-env", "@babel/preset-react"],
+  "plugins": ["@babel/plugin-proposal-class-properties"]
+}
+```
+
+Note: And this of course just tells Babel which settings to use and when.
+
+<--v-->
+
+#### package.json
+
+```
+{
+  "name": "yet-another-npm-demo",
+  "version": "0.0.1",
+  "description": "A demonstration for my npm package tech talk",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "webpack --mode production",
+    "start": "webpack --mode development",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Kim Thompson",
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/core": "^7.4.0",
+    "@babel/plugin-proposal-class-properties": "^7.4.0",
+    "@babel/preset-env": "^7.4.2",
+    "@babel/preset-react": "^7.0.0",
+    "@babel/runtime": "^7.4.2",
+    "babel-loader": "^8.0.5",
+    "classnames": "^2.2.6",
+    "react": "^16.8.6",
+    "webpack": "^4.29.6",
+    "webpack-cli": "^3.3.0"
+  }
+}
+```
+
+Note: And, as a quick reminder, this is roughly what your package should look like (minus the author)
+
+<--s-->
+
+Now, if you run `npm build` and rerun `npm link` (because your "main" folder changed), you should be able to use this component in another React project. Run `npm link yet-another-npm-demo` in that directory.
+
+Note: Just to demonstrate that it works, I spun up a quick example project with `create-react-app` and replaced their default App logo with my Heading.
+
+<--v-->
+
+Import it like this:
+
+```
+import { Heading } from 'yet-another-npm-demo`;
+```
+
+And use it in your `render()` function like this:
+
+```
+class App extends Component {
+  render() {
+    return (
+      <div className="App">
+        <header className="App-header">
+          <Heading level={3}>Hi! I am a titan-style heading</Heading>
+        </header>
+      </div>
+    );
+  }
+}
+```
+
+Note: 
+
+<--v-->
+
+Now, when you run the project with `npm run start`, you'll see this at [localhost:3000](http://localhost:3000).
+
+<img src='assets/example(1).png' alt='The final result' style='width: 700px'></img>
+
+Note: And that's it! You're now using an NPM package that you made and importing components from it.
+
+<--s-->
+
+## Publishing to NPM
 
 Go to [npmjs.com](https://www.npmjs.com/) and create an account if you don't already have one. Then enter `npm login` in your terminal and answer the prompts for your **username**, **password** and **email**.
 
-Note: You'll only have to do this part if you've never published to NPM before.
+Note: Next, we're going to go over publishing. You'll only have to do this part if you've never published to NPM before.
 
 <--v-->
 
 <!-- .slide: data-background="./assets/fireworks-background.png" -->
-## Publish the dang thing
+## Publish it already
 
 <img src='https://media.giphy.com/media/zBhZiVNNQjfTG/giphy.gif' alt='Yaaaasss gif' style='width: 350px;margin: 10px'></img>
 
-Run `npm run publish`. That's it! Try downloading your package with `npm i [your-package-name]` and use it however you please.)
+Run `npm run publish`.
+
+That's it! Try downloading your package with `npm i [your-package-name]` and use it however and wherever you please.
 
 <--v-->
 
@@ -213,12 +305,18 @@ Note: You should generally avoid unpublishing things, especially if someone may 
 
 ## Credits
 
-* This tutorial was largely based on [this one](https://hackernoon.com/creating-a-library-of-react-components-using-create-react-app-without-ejecting-d182df690c6b) by Aakash N S for [HackerNoon](https://hackernoon.com/), but updated and edited to better fit our needs
-* I also used a bit of [this tutorial](https://medium.freecodecamp.org/how-to-make-a-beautiful-tiny-npm-package-and-publish-it-2881d4307f78) by Jonathan Wood for [freeCodeCamp](https://medium.freecodecamp.org/) to remind myself how I logged in to NPM
-* This presentation was made with [reveal-md](https://github.com/webpro/reveal-md), a library that uses [reveal.js](https://github.com/hakimel/reveal.js/) to create slides and transitions from a markdown file
+This tutorial was a mix of the following:
+
+* [NPM's official guide](https://docs.npmjs.com/creating-node-js-modules)
+* [How to publish a npm package in four steps](https://medium.com/@vmarchesin/how-to-publish-a-npm-package-in-four-steps-4344ab88e852) by Vinicius Marchesin Araujo
+* [How to Create a React app from scratch using Webpack 4](https://medium.freecodecamp.org/part-1-react-app-from-scratch-using-webpack-4-562b1d231e75) by Linh Nguyen My
+* [How to make a Beautiful Tiny NPM Package and Publish it](https://medium.freecodecamp.org/how-to-make-a-beautiful-tiny-npm-package-and-publish-it-2881d4307f78) by Jonathan Wood
+
+<--v-->
+This presentation was made with [reveal-md](https://github.com/webpro/reveal-md), a library that uses [reveal.js](https://github.com/hakimel/reveal.js/) to create slides and transitions from a markdown file. The color scheme of this file is based on the VSCode theme [Night Owl](https://marketplace.visualstudio.com/items?itemName=sdras.night-owl) by Sarah Drasner
 
 <--v-->
 
 ### If you wish to review this presentation in the future, you can find it on my website
 
-[kimthompson.me/react-component-npm-package](https://kimthompson.me/react-component-npm-package)
+[kimthompson.me/tech-talk-npm-package](http://kimthompson.me/tech-talk-npm-package/)

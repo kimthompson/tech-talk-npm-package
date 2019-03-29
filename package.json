@@ -6,7 +6,7 @@
   "author": "Kim Thompson <kthompson@mpr.org (http://kimthompson.me)",
   "license": "MIT",
   "scripts": {
-    "start": "reveal-md slides.md",
+    "start": "reveal-md slides.md -w",
     "build": "reveal-md slides.md --static docs --static-dirs=assets",
     "stylefix": "mv docs/index.html docs/index_old.html && sed 's?./_assets/assets/night-owl.css?./assets/night-owl.css?g' docs/index_old.html > docs/index.html",
     "serve": "serve docs",
